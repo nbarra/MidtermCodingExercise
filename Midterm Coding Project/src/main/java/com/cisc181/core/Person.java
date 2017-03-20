@@ -46,10 +46,14 @@ public abstract class Person implements java.io.Serializable {
 		return DOB;
 	}
 
-	public void setDOB(Date DOB){
+	public void setDOB(Date DOB) throws Exception{
+		Calendar birthDate = Calendar.getInstance();
+		birthDate.setTime(DOB);
+		birthDate.set(birthDate.get(Calendar.YEAR),birthDate.get(Calendar.MONTH),birthDate.get(Calendar.DATE));
+		if(birthDate.get(Calendar.YEAR) > 1917){
+			throw new PersonException(this);
+		}
 		this.DOB = DOB;
-		
-		
 	}
 
 	public void setAddress(String newAddress) {
@@ -60,8 +64,18 @@ public abstract class Person implements java.io.Serializable {
 		return address;
 	}
 
-	public void setPhone(String newPhone_number) {
-		phone_number = newPhone_number;
+	public void setPhone(String newPhone_number) throws Exception{
+		String regex = "^\\(?([0-9]{3})\\)?[-.\\s]?([0-9]{3})[-.\\s]?([0-9]{4})$";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(newPhone_number);
+		
+		if(matcher.matches()){
+			phone_number = newPhone_number;
+		}
+		else{
+			throw new PersonException(this);
+		}
+		
 	
 	}
 
@@ -94,7 +108,7 @@ public abstract class Person implements java.io.Serializable {
 		this.FirstName = FirstName;
 		this.MiddleName = MiddleName;
 		this.LastName = LastName;
-		this.setDOB(DOB);
+		this.DOB;
 		this.address = Address;
 		this.setPhone(Phone_number);
 		this.email_address = Email;
